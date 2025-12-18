@@ -12,7 +12,7 @@ import(
 
 func SetWebhook() {
 	botToken := os.Getenv("TELEGRAM_API_KEY")
-	url := "http://localhost:8000/bot"
+	url := "https://adverse-zora-nehemiah-e50fbf0b.koyeb.app:8000/bot"
 
 	http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/setWebhook?url=%s", botToken, url))
 }
