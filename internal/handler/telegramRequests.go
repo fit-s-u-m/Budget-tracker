@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"budget_tracker/cmd/structs"
+	"github.com/mymmrac/telego"
+	"github.com/mymmrac/telego/telegohandler"
 )
 func parseTelegramRequest(c *gin.Context) (*structs.Update, error) {
 	var update structs.Update
@@ -17,13 +19,17 @@ func parseTelegramRequest(c *gin.Context) (*structs.Update, error) {
 
 	return &update, nil
 }
-func TelegramWebhook(c *gin.Context) {
-	update, err := parseTelegramRequest(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "invalid telegram payload",
-		})
-		return
+func TelegramWebhook(handler *telegohandler.Handler) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var update telego.Update
+
+		if err := c.ShouldBindJSON(&update); err != nil {
+			c.AbortWithStatus(400)
+			return
+		}
+
+		handler.HandleUpdate(update)
+		c.Status(200)
 	}
-	c.JSON(http.StatusOK, gin.H{"ok": true})
 }
+

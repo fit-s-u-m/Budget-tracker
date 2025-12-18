@@ -2,10 +2,10 @@ package server
 
 import (
 	"net/http"
+	"budget_tracker/internal/telegramBotNative"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"budget_tracker/internal/handler"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -17,10 +17,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 		AllowHeaders:     []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true, // Enable cookies/auth
 	}))
+	telegrambotnative.SetWebhook()
 
+	r.POST("/bot",telegrambotnative.HandleWebhook)
 	r.GET("/", s.HelloWorldHandler)
-	r.GET("/chatbot", handler.ChatBot)
-
 	r.GET("/health", s.healthHandler)
 
 	return r
